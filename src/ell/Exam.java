@@ -4,9 +4,5 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Exam {
-public List<Quiz> Quizs;
-public Exam()
-{
-	Quizs = new ArrayList();
-}
+public List<Quiz> Quizs = new ArrayList<Quiz>();
 }
