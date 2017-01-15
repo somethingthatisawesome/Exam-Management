@@ -1,6 +1,7 @@
 package bll;
 
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -23,14 +24,17 @@ import ell.Quiz;
 public class FileManager {
 private final String quizFm = "decimal";
 private final String answerFm = "lowerLetter";
+private final String fontFamily = "Times New Roman";
+private final int fontSize = 13;
 private XWPFDocument xdoc;
+private XWPFDocument exportdoc;
 InputStream in = null;
 CTAbstractNum abstractNum = null;
 	//Read Docx Word File
 	public FileManager()
 	{
 		try {
-            in = new FileInputStream("numbering.xml");
+            in = new FileInputStream("resources/numbering.xml");
             abstractNum = CTAbstractNum.Factory.parse(in);
         } catch (XmlException e) {
             e.printStackTrace();
@@ -89,42 +93,100 @@ CTAbstractNum abstractNum = null;
 	}
 	public void exportExam(String path,Exam exam)
 	{
-		XWPFDocument doc = new XWPFDocument();
-        doc.createNumbering();
+		try {
+			exportdoc = new XWPFDocument(new FileInputStream("resources/test.docx"));
+		} catch (FileNotFoundException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		exportdoc.createNumbering();
         XWPFNumbering numbering=null;
-        numbering = doc.createNumbering();
+        numbering = exportdoc.createNumbering();
         for(Quiz quiz:exam.Quizs) {
-        	XWPFParagraph para = doc.createParagraph();
-            para.setNumID(addListStyle(abstractNum, doc, numbering));
+        	XWPFParagraph para = exportdoc.createParagraph();
+        	para.setNumID(addListStyle(abstractNum,numbering));
+        	para.getCTP().getPPr().getNumPr().addNewIlvl().setVal(BigInteger.valueOf(0));
             XWPFRun run=para.createRun();
             run.setText(quiz.value);
+            for(Answer ans:quiz.Answers)
+            {
+            	XWPFParagraph para1 = exportdoc.createParagraph();
+            	para1.setStyle("ListParagraph");
+            	para1.setNumID(addListStyle(abstractNum,numbering));
+            	para1.getCTP().getPPr().getNumPr().addNewIlvl().setVal(BigInteger.valueOf(1));
+                XWPFRun run1=para1.createRun();
+                run1.setText(ans.value);
+            }
         }
         
         try {
             FileOutputStream out = new FileOutputStream(path);
-            doc.write(out);
+            exportdoc.write(out);
             out.close();
             in.close();
         } catch(Exception e) {}
 	}
-    private BigInteger addListStyle(CTAbstractNum abstractNum, XWPFDocument doc, XWPFNumbering numbering) {
+    private BigInteger addListStyle(CTAbstractNum abstractNum, XWPFNumbering numbering) {
         try {
 
             XWPFAbstractNum abs = new XWPFAbstractNum(abstractNum, numbering);
             BigInteger id = BigInteger.valueOf(0);
+            /*
             boolean found = false;
             while (!found) {
                 Object o = numbering.getAbstractNum(id);
                 found = (o == null);
                 if (!found)
-                    id = id.add(BigInteger.ONE);
-            }
+                    id = id.add(BigInteger.valueOf(1));
+                //System.out.println(id );
+            }*/
             abs.getAbstractNum().setAbstractNumId(id);
             id = numbering.addAbstractNum(abs);
-            return doc.getNumbering().addNum(id);
+            return exportdoc.getNumbering().addNum(id);
         } catch (Exception e) {
             e.printStackTrace();
             return null;
         }
     }
+    
+    /*
+    private BigInteger addListStyle(CTAbstractNum abstractNum)
+    {
+        try
+        {
+            XWPFNumbering numbering = xdoc.getNumbering();
+            // generate numbering style from XML
+            XWPFAbstractNum abs = new XWPFAbstractNum(abstractNum, numbering);
+
+            // find available id in document
+            BigInteger id = BigInteger.valueOf(41);
+            /*
+            boolean found = false;
+            while (!found)
+            {
+                Object o = numbering.getAbstractNum(id);
+                found = (o == null);
+                if (!found)
+                	{
+                	id = id.add(BigInteger.ONE);
+                	System.out.println(id);
+                	}
+                
+            }
+            // assign id
+            abs.getAbstractNum().setAbstractNumId(id);
+            // add to numbering, should get back same id
+            id = numbering.addAbstractNum(abs);
+            // add to num list, result is numid
+            return exportdoc.getNumbering().addNum(id);           
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+            return null;
+        }
+    }*/
 }
