@@ -7,7 +7,8 @@ public class Program {
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 		FileManager fm = new FileManager();
-		Exam exam = fm.ReadDocFile("D:/On-tap-trac-nghiem.docx");
+		Exam exam = fm.readDocFile("D:/On-tap-trac-nghiem.docx");
+		fm.exportExam("d:/test.docx", exam);
 	}
 
 }
