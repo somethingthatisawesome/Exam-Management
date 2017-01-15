@@ -94,7 +94,7 @@ CTAbstractNum abstractNum = null;
 	public void exportExam(String path,Exam exam)
 	{
 		try {
-			exportdoc = new XWPFDocument(new FileInputStream("resources/test.docx"));
+			exportdoc = new XWPFDocument(new FileInputStream("resources/template.docx"));
 		} catch (FileNotFoundException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
