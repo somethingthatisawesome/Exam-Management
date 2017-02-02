@@ -93,6 +93,37 @@ CTAbstractNum abstractNum = null;
 		     } 
 		return exam;
 	}
+	public void exportAnswer(String path,Exam exam)
+	{
+		try {
+			//get Document Style from template.docx
+			exportdoc = new XWPFDocument(new FileInputStream("resources/template.docx"));
+		} catch (FileNotFoundException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		exportdoc.createNumbering();
+        XWPFNumbering numbering=null;
+        numbering = exportdoc.createNumbering();
+        for(Quiz quiz:exam.Quizs) {
+        	XWPFParagraph paraQiz = exportdoc.createParagraph();
+        	paraQiz.setNumID(addListStyle(abstractNum,numbering));
+        	paraQiz.getCTP().getPPr().getNumPr().addNewIlvl().setVal(BigInteger.valueOf(0));
+            XWPFRun runQiz=paraQiz.createRun();
+            
+            runQiz.setText(quiz.answer());
+        }
+        
+        try {
+            FileOutputStream out = new FileOutputStream(path);
+            exportdoc.write(out);
+            out.close();
+            in.close();
+        } catch(Exception e) {}
+	}
 	public void exportExam(String path,Exam exam)
 	{
 		try {

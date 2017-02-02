@@ -13,6 +13,10 @@ import javax.swing.JFileChooser;
 
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import javax.swing.JPanel;
+import javax.swing.border.BevelBorder;
+import javax.swing.border.LineBorder;
+import java.awt.Color;
 
 public class MainForm {
 	private ELO elo = new ELO();
@@ -48,12 +52,12 @@ public class MainForm {
 	 */
 	private void initialize() {
 		frame = new JFrame();
-		frame.setBounds(100, 100, 450, 300);
+		frame.setBounds(100, 100, 520, 300);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.getContentPane().setLayout(null);
 		
 		textField = new JTextField();
-		textField.setBounds(26, 22, 259, 25);
+		textField.setBounds(134, 21, 259, 25);
 		frame.getContentPane().add(textField);
 		textField.setColumns(10);
 		
@@ -70,18 +74,27 @@ public class MainForm {
 			        elo.exam = elo.readFile(textField.getText());
 			}
 		});
-		btnNewButton.setBounds(286, 22, 100, 24);
+		btnNewButton.setBounds(394, 21, 100, 24);
 		frame.getContentPane().add(btnNewButton);
 		
 		btnExport = new JButton("Export");
 		btnExport.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				
-				elo.ExportFile("D:/test.docx", elo.exam);
+				elo.ExportFile("D:/test", elo.exam);
 				
 			}
 		});
-		btnExport.setBounds(319, 227, 89, 23);
+		btnExport.setBounds(405, 227, 89, 23);
 		frame.getContentPane().add(btnExport);
+		
+		JButton btnExportRand = new JButton("Export Rand");
+		btnExportRand.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				elo.ExportFile("D:/test_rand", elo.randomizeExam(elo.exam));
+			}
+		});
+		btnExportRand.setBounds(292, 227, 89, 23);
+		frame.getContentPane().add(btnExportRand);
 	}
 }

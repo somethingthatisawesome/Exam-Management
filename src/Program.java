@@ -1,14 +1,31 @@
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 import bll.FileManager;
+import ell.Answer;
 import ell.Exam;
 
 public class Program {
 
 
 	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-		FileManager fm = new FileManager();
-		Exam exam = fm.readDocFile("D:/On-tap-trac-nghiem.docx");
-		fm.exportExam("d:/test.docx", exam);
-	}
+		   
+		// create array list object       
+		   List arrlist = new ArrayList();
+		      
+		   // populate the list
+		   arrlist.add("A");
+		   arrlist.add("B");
+		   arrlist.add("C");  
+		      
+		   System.out.println("Initial collection: "+arrlist);
+		      
+		   // shuffle the list
+		   Collections.shuffle(arrlist);
+		      
+		   System.out.println("Final collection after shuffle: "+arrlist);
+	   
+	  }
 
 }
