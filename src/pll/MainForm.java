@@ -12,6 +12,7 @@ import javax.swing.JButton;
 import javax.swing.JFileChooser;
 
 import java.awt.event.ActionListener;
+import java.io.File;
 import java.awt.event.ActionEvent;
 import javax.swing.JPanel;
 import javax.swing.border.BevelBorder;
@@ -21,9 +22,9 @@ import java.awt.Color;
 public class MainForm {
 	private ELO elo = new ELO();
 	private JFrame frame;
-	private JTextField textField;
+	private JTextField inputText;
 	private JButton btnExport;
-
+	private OutputForm outputform;
 	/**
 	 * Launch the application.
 	 */
@@ -56,32 +57,36 @@ public class MainForm {
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.getContentPane().setLayout(null);
 		
-		textField = new JTextField();
-		textField.setBounds(134, 21, 259, 25);
-		frame.getContentPane().add(textField);
-		textField.setColumns(10);
+		inputText = new JTextField();
+		inputText.setBounds(52, 21, 259, 25);
+		frame.getContentPane().add(inputText);
+		inputText.setColumns(10);
 		
 		JButton btnNewButton = new JButton("Choose File");
 		btnNewButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				 JFileChooser fileChooser = new JFileChooser();
-				 fileChooser.setFileFilter(new FileNameExtensionFilter("Word Document", "docx"));
-			        int returnValue = fileChooser.showOpenDialog(null);
-			        if (returnValue == JFileChooser.APPROVE_OPTION) {
-			          String selectedFile = fileChooser.getSelectedFile().toString();
-			          textField.setText(selectedFile);
-			        }
-			        elo.exam = elo.readFile(textField.getText());
+				inputText.setText(getFileLocation());
+			        
 			}
 		});
-		btnNewButton.setBounds(394, 21, 100, 24);
+		btnNewButton.setBounds(323, 21, 136, 24);
 		frame.getContentPane().add(btnNewButton);
 		
 		btnExport = new JButton("Export");
 		btnExport.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				String fileLocation = inputText.getText();
+				//Check if file exist or not
+				if(fileExist(fileLocation)==false)
+				{
+					return;
+				}
 				
-				elo.ExportFile("D:/test", elo.exam);
+				//
+				elo.exam = elo.readFile(fileLocation);
+				String outputLocation="";
+				outputLocation = getDirectoryLocation();
+				elo.ExportFile(outputLocation, elo.exam,"test");
 				
 			}
 		});
@@ -91,10 +96,49 @@ public class MainForm {
 		JButton btnExportRand = new JButton("Export Rand");
 		btnExportRand.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				elo.ExportFile("D:/test_rand", elo.randomizeExam(elo.exam));
+				String fileLocation = inputText.getText();
+				if(fileExist(fileLocation)==false)
+				{
+					return;
+				}
+				String outPutLocation = getDirectoryLocation();
+				elo.exam = elo.readFile(inputText.getText());
+				elo.ExportFile(outPutLocation, elo.randomizeExam(elo.exam),"test_random");
 			}
 		});
-		btnExportRand.setBounds(292, 227, 89, 23);
+		btnExportRand.setBounds(228, 227, 153, 23);
 		frame.getContentPane().add(btnExportRand);
+	}
+	private String getFileLocation()
+	{
+		String location="";
+		JFileChooser fileChooser = new JFileChooser();
+		fileChooser.setApproveButtonText("Choose");
+		fileChooser.setFileFilter(new FileNameExtensionFilter("Word Document", "docx"));
+	        int returnValue = fileChooser.showOpenDialog(null);
+	        if (returnValue == JFileChooser.APPROVE_OPTION) {
+	          String selectedFile = fileChooser.getSelectedFile().toString();
+	          location=selectedFile;
+	        }
+	        return location;
+	}
+	private String getDirectoryLocation()
+	{
+		String location="";
+		JFileChooser fileChooser = new JFileChooser();
+		fileChooser.setApproveButtonText("Save");
+		//fileChooser.setFileFilter(new FileNameExtensionFilter("Word Document", "docx"));
+		fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+	        int returnValue = fileChooser.showOpenDialog(null);
+	        if (returnValue == JFileChooser.APPROVE_OPTION) {
+	          String selectedFile = fileChooser.getSelectedFile().toString();
+	          location=selectedFile;
+	        }
+	        return location;
+	}
+	private boolean fileExist(String path)
+	{
+		File varTmpDir = new File(path);
+		return varTmpDir.exists();
 	}
 }

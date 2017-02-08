@@ -9,16 +9,27 @@ import ell.Exam;
 import ell.Quiz;
 
 public class ELO {
-	public Exam exam = new Exam(); 
+	public Exam exam; 
 	private FileManager fm = new FileManager();
+	public ELO()
+	{
+		if(exam==null)
+		{
+			exam = new Exam();
+		}
+	}
 	public Exam readFile(String path)
 	{
 		return fm.readDocFile(path);
 	}
-	public void ExportFile(String path,Exam exam)
+	public void ExportMultipleFiles(String path,Exam exam,int size)
 	{
-		fm.exportExam(path+".docx", exam);
-		fm.exportAnswer(path+"_answer.docx", exam);
+		
+	}
+	public void ExportFile(String path,Exam exam,String docName)
+	{
+		fm.exportExam(path+"/"+docName+".docx", exam);
+		fm.exportAnswer(path+"/"+docName+"_answer.docx", exam);
 	}
 	public Exam randomizeExam(Exam exam)
 	{	
